@@ -3,6 +3,7 @@ var path = require('path')
 var http = require('http')
 var express = require('express')
 var socket = require('socket.io')
+var clock = require('./clock.js')
 
 // app
 var app = express()
@@ -22,6 +23,9 @@ app.listen(app.get('port'), function () {
 // sockets
 var server = http.createServer(app)
 var io = socket.listen(server)
+
+// clock
+clock()
 
 // export
 module.exports = {
