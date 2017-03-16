@@ -1,16 +1,15 @@
 // lib
-var app = require('./app.js')
+var worker = require('./worker.js')
 
 // properties
-var seconds = 10 * 60 * 1000 // 10 minutes
-seconds = 3000
+var seconds = 5 * 60 * 1000 // 5 minutes
 
 // entry
 module.exports = start()
 
 function start () {
   setTimeout(function () {
-    app.run()
+    worker.run()
     start()
   }, seconds)
 }

@@ -4,15 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "gulp lint; node ./src/clock.js"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "scripts": {
-    "start" : "gulp lint; node ./src/clock.js"
-  },
   "dependencies": {
+    "express": "^4.15.2",
     "request": "^2.81.0"
   },
   "devDependencies": {
