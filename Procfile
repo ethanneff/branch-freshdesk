@@ -1,1 +1,1 @@
-web: node ./src/server/clock.js
+web: node ./src/server/app.js

@@ -4,8 +4,7 @@
   "description": "",
   "main": "./src/server/app.js",
   "scripts": {
-    "start": "node ./src/server/app.js",
-    "test": "gulp lint; node ./src/server/clock.js"
+    "start": "gulp lint; node ./src/server/app.js"
   },
   "keywords": [],
   "author": "",
