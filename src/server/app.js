@@ -24,6 +24,8 @@ app.listen(app.get('port'), function () {
 var server = http.createServer(app)
 var io = socket.listen(server)
 
+console.log(app);
+
 // clock
 clock()
 
