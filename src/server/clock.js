@@ -6,7 +6,7 @@ var seconds = 3 * 60 * 1000 // 3 minutes
 seconds = 3000
 
 // entry
-module.exports = start()
+module.exports = start
 
 function start () {
   setTimeout(function () {
