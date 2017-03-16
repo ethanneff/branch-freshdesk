@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "gulp lint; node ./src/clock.js"
+    "start": "node ./src/app.js",
+    "test": "gulp lint; node ./src/clock.js"
   },
   "keywords": [],
   "author": "",
