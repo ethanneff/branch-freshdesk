@@ -18,13 +18,14 @@
 
   - develop
 
-  ```
-  npm run test
+  ```bash
+  npm run start
   ```
 
   - deploy
 
-  ```
+  ```bash
   git commit -am 'update'
   git push heroku master
   ```
+    
