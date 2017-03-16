@@ -1,4 +1,7 @@
+// lib
 var express = require('express')
+
+// app
 var app = express()
 
 app.set('port', (process.env.PORT || 5000))
