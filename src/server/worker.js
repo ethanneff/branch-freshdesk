@@ -1,5 +1,6 @@
 // lib
 var request = require('request')
+// var socket = require('socket.io')
 
 // properties
 var currentAgents = []

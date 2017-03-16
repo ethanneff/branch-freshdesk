@@ -6,6 +6,7 @@
     - `express` for website
     - `gulp-standard` for linting
     - `request` for cURLs
+    - `socket.io` for website updates
 
   - files
 
