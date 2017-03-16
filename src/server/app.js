@@ -7,7 +7,7 @@ var app = express()
 app.set('port', (process.env.PORT || 5000))
 
 app.get('/', function (request, response) {
-  response.render('../client/index')
+  response.render('../client/index.html')
 })
 
 app.listen(app.get('port'), function () {
