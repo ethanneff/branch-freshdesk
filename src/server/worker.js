@@ -14,13 +14,13 @@ function run () {
     var agents = getAgents(res)
     var change = isAgentsDifferent(agents)
 
-    if (change) {
+    // if (change) {
       var message = getMessage(agents)
       var json = getJson(agents)
 
       messageSlack(message)
       updateHtml(json)
-    }
+    // }
     currentAgents = agents
   })
 }
