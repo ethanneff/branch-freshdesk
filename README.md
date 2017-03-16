@@ -7,6 +7,7 @@
     - `gulp-standard` for linting
     - `request` for cURLs
     - `socket.io` for website updates
+    - `ejs` for website templating
 
   - files
 

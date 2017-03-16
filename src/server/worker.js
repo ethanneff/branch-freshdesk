@@ -1,6 +1,5 @@
 // lib
 var request = require('request')
-// var socket = require('socket.io')
 
 // properties
 var currentAgents = []
@@ -136,5 +135,13 @@ function messageSlack (message, callback) {
 }
 
 function updateHtml (json) {
-
+  // app.io.sockets.on('connection', function (socket) {
+  //   var msg = 'Cannot reach host'
+  //   if (pinger.isAlive) {
+  //     msg = 'Host is reachable'
+  //   }
+  //   socket.emit('ping', {
+  //     msg: msg
+  //   })
+  // })
 }
