@@ -85,7 +85,7 @@ function getMessage (agents) {
   attachments[0].fields.push({'value': value})
 
   var body = {
-    'channel': '#eneff_test',
+    'channel': '#integration-eng-core',
     'username': username,
     'attachments': attachments,
     'icon_emoji': ':tim:'
