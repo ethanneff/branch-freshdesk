@@ -7,8 +7,7 @@ var currentAgents = []
 
 // entry
 module.exports = {
-  run: run,
-  currentAgents: currentAgents
+  run: run
 }
 
 function run () {
@@ -24,7 +23,6 @@ function run () {
 
     updateHtml(agents)
     currentAgents = agents
-    console.log('done')
   })
 }
 

@@ -36,8 +36,8 @@ function setupSocket () {
   server.listen(process.env.PORT || 5000)
   io.sockets.on('connection', function (socket) {
     console.log('connected socket')
-    console.log(worker.currentAgents)
     client = socket
+    worker.run()
   })
 }
 
