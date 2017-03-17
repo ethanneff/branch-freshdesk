@@ -31,3 +31,7 @@
   git push heroku master
   ```
     
+  - todo
+
+    - push to git
+    - move credentials to config.json

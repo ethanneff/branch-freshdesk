@@ -11,6 +11,7 @@ module.exports = {
 }
 
 function run () {
+  console.log('worker run')
   scrapeFreshDesk(function (res) {
     var agents = getAgents(res)
     var change = isAgentsDifferent(agents)
