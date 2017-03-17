@@ -7,7 +7,8 @@ var currentAgents = []
 
 // entry
 module.exports = {
-  run: run
+  run: run,
+  currentAgents: currentAgents
 }
 
 function run () {
@@ -139,6 +140,3 @@ function updateHtml (agents) {
   }
   app.pub('ping', output)
 }
-
-// export
-exports.currentAgents = currentAgents
