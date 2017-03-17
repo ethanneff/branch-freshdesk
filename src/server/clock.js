@@ -2,7 +2,7 @@
 var worker = require('./worker.js')
 
 // properties
-var seconds = 5 * 60 * 1000 // 3 minutes
+var seconds = 1 * 60 * 1000 // 1 minutes
 
 // entry
 module.exports = start
