@@ -14,7 +14,7 @@ var client
 module.exports = run()
 
 function run () {
-  console.log('run app')
+  console.log('app run')
   setupServer()
   setupSocket()
   runWebService()
@@ -35,7 +35,6 @@ function setupSocket () {
   var io = socketio.listen(server)
   server.listen(process.env.PORT || 5000)
   io.sockets.on('connection', function (socket) {
-    console.log('connected socket')
     client = socket
     worker.run()
   })
