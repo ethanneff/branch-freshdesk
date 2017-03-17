@@ -16,6 +16,7 @@
     - `app.js` run website
     - `clock.js` simulates a cron job
     - `worker.js` runs server operations
+    - `index.ejs` client website
 
   - develop
 
