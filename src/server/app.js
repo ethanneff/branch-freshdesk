@@ -4,7 +4,7 @@ var http = require('http')
 var express = require('express')
 var socketio = require('socket.io')
 var clock = require('./clock.js')
-var clock = require('./worker.js')
+var worker = require('./worker.js')
 
 // properties
 var app = express()
