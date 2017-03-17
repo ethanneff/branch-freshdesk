@@ -8,6 +8,7 @@
     - `gulp-standard` js linting
     - `request` server cURLs
     - `socket.io` server to website updates
+    - `helmet` xss security
     - `ejs` website templating
 
   - files

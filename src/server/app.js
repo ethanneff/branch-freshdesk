@@ -3,12 +3,15 @@ var path = require('path')
 var http = require('http')
 var express = require('express')
 var socketio = require('socket.io')
+var helmet = require('helmet')
 var clock = require('./clock.js')
 var worker = require('./worker.js')
 
 // properties
 var app = express()
 var client
+
+console.log('Running in :'  + process.env.NODE_ENV)
 
 // entry
 module.exports = run()
@@ -22,6 +25,7 @@ function run () {
 
 // methods
 function setupServer () {
+  app.use(helmet())
   app.use(express.static(path.join(__dirname, './../../bower_components')))
   app.set('views', path.join(__dirname, './../client'))
   app.set('view engine', 'ejs')
