@@ -4,6 +4,7 @@ var http = require('http')
 var express = require('express')
 var socketio = require('socket.io')
 var clock = require('./clock.js')
+var clock = require('./worker.js')
 
 // properties
 var app = express()
@@ -35,6 +36,7 @@ function setupSocket () {
   server.listen(process.env.PORT || 5000)
   io.sockets.on('connection', function (socket) {
     console.log('connected socket')
+    console.log(worker.currentAgents)
     client = socket
   })
 }

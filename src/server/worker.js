@@ -139,3 +139,6 @@ function updateHtml (agents) {
   }
   app.pub('ping', output)
 }
+
+// export
+exports.currentAgents = currentAgents
