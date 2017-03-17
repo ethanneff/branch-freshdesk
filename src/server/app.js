@@ -2,36 +2,54 @@
 var path = require('path')
 var http = require('http')
 var express = require('express')
-var socket = require('socket.io')
+var socketio = require('socket.io')
 var clock = require('./clock.js')
 
-// app
+// properties
 var app = express()
+var client
 
-app.set('port', (process.env.PORT || 5000))
-app.set('views', path.join(__dirname, './../client'))
-app.set('view engine', 'ejs')
+// entry
+module.exports = run()
 
-app.get('/', function (request, response) {
-  response.render('index')
-})
+function run () {
+  setupServer()
+  setupSocket()
+  runWebService()
+}
 
-app.listen(app.get('port'), function () {
-  console.log('Node app is running on port', app.get('port'))
-})
+// methods
+function setupServer () {
+  app.use(express.static(path.join(__dirname, './../../bower_components')))
+  app.set('views', path.join(__dirname, './../client'))
+  app.set('view engine', 'ejs')
+  app.get('/', function (request, response) {
+    response.render('index')
+  })
+}
 
-// sockets
-var server = http.createServer(app)
-var io = socket.listen(server)
+function setupSocket () {
+  var server = http.createServer(app)
+  var io = socketio.listen(server)
+  server.listen(process.env.PORT || 5000)
+  io.sockets.on('connection', function (socket) {
+    client = socket
+  })
+}
 
-console.log(app);
+function runWebService () {
+  clock()
+}
 
-// clock
-clock()
+// exports
+exports.pub = function (event, data) {
+  if (client) client.emit(event, data)
+}
 
-// export
-module.exports = {
-  app: app,
-  server: server,
-  io: io
+exports.sub = function (event, func) {
+  if (client) {
+    client.on(event, function (data) {
+      func(data)
+    })
+  }
 }

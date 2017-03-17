@@ -1,5 +1,6 @@
 // lib
 var request = require('request')
+var app = require('./app.js')
 
 // properties
 var currentAgents = []
@@ -16,11 +17,10 @@ function run () {
 
     if (change) {
       var message = getMessage(agents)
-      var json = getJson(agents)
-
       messageSlack(message)
-      updateHtml(json)
     }
+
+    updateHtml(agents)
     currentAgents = agents
   })
 }
@@ -43,7 +43,7 @@ function scrapeFreshDesk (callback) {
     if (!error && response.statusCode === 200) {
       callback(body)
     } else {
-      throw new Error('could not scrape freshdesk')
+      console.error('could not scrape freshdesk')
     }
   })
 }
@@ -67,10 +67,6 @@ function getAgents (res) {
     agents.push(agent)
   }
 
-  return agents
-}
-
-function getJson (agents) {
   return agents
 }
 
@@ -129,15 +125,16 @@ function messageSlack (message, callback) {
     if (!error && response.statusCode === 200) {
       if (callback) callback(body)
     } else {
-      throw new Error('could not send to slack')
+      console.error('could not send to slack')
     }
   })
 }
 
-function updateHtml (json) {
-  // app.io.sockets.on('connection', function (socket) {
-  //   socket.emit('ping', {
-  //     msg: Date.now()
-  //   })
-  // })
+function updateHtml (agents) {
+  var output = ''
+  for (var i = 0; i < agents.length; i++) {
+    var agent = agents[i]
+    output += '<pre>' + agent + '</pre>'
+  }
+  app.pub('ping', output)
 }

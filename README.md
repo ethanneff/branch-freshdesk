@@ -2,12 +2,13 @@
 
   - dependencies
   
-    - `node` for server
-    - `express` for website
-    - `gulp-standard` for linting
-    - `request` for cURLs
-    - `socket.io` for website updates
-    - `ejs` for website templating
+    - `node` server dependencies
+    - `bower` website dependencies
+    - `express` website
+    - `gulp-standard` js linting
+    - `request` server cURLs
+    - `socket.io` server to website updates
+    - `ejs` website templating
 
   - files
 
@@ -19,7 +20,7 @@
   - develop
 
   ```bash
-  npm run start
+  npm start
   ```
 
   - deploy
