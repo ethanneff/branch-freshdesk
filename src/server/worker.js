@@ -24,6 +24,7 @@ function run () {
 
     updateHtml(agents)
     currentAgents = agents
+    console.log('done')
   })
 }
 
