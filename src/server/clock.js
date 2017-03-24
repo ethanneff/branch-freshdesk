@@ -1,14 +1,18 @@
 // lib
 var worker = require('./worker.js')
+var server = require('./app.js')
 
 // properties
-var seconds = 1 * 60 * 1000 // 1 minutes
+var seconds
 
 // entry
 module.exports = start
 
 function start () {
-  worker.run()
+  console.log('clock')
+  // TODO: test testmode
+  seconds = server.testmode ? 5000 : 5 * 60 * 1000
+  worker.scrape()
   setTimeout(function () {
     start()
   }, seconds)

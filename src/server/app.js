@@ -1,62 +1,67 @@
+// app
+var express = require('express')
+var app = require('express')()
+var http = require('http').Server(app)
+var io = require('socket.io')(http)
+
 // lib
 var path = require('path')
-var http = require('http')
-var express = require('express')
-var socketio = require('socket.io')
 var helmet = require('helmet')
-var clock = require('./clock.js')
 var worker = require('./worker.js')
 
 // properties
-var app = express()
-var client
-
-console.log('Running in :'  + process.env.NODE_ENV)
+var testmode
 
 // entry
 module.exports = run()
 
 function run () {
-  console.log('app run')
-  setupServer()
-  setupSocket()
-  runWebService()
+  // testmode
+  testmode = isTestMode()
+
+  // server
+  app.use(helmet())
+  app.use(express.static(path.join(__dirname, './../../bower_components')))
+  app.use(express.static(path.join(__dirname, './../client')))
+  app.get('/', function (request, response) {
+    response.sendFile(path.join(__dirname, '/index.html'))
+  })
+
+  // start
+  http.listen(process.env.PORT || 5000)
+
+  // sockets
+  sockets()
 }
 
 // methods
-function setupServer () {
-  app.use(helmet())
-  app.use(express.static(path.join(__dirname, './../../bower_components')))
-  app.set('views', path.join(__dirname, './../client'))
-  app.set('view engine', 'ejs')
-  app.get('/', function (request, response) {
-    response.render('index')
-  })
-}
-
-function setupSocket () {
-  var server = http.createServer(app)
-  var io = socketio.listen(server)
-  server.listen(process.env.PORT || 5000)
-  io.sockets.on('connection', function (socket) {
-    client = socket
-    worker.run()
-  })
-}
-
-function runWebService () {
-  clock()
-}
-
-// exports
-exports.pub = function (event, data) {
-  if (client) client.emit(event, data)
-}
-
-exports.sub = function (event, func) {
-  if (client) {
-    client.on(event, function (data) {
-      func(data)
-    })
+function isTestMode () {
+  var args = process.argv.splice(2)
+  for (var i = 0; i < args.length; i++) {
+    var arg = args[i]
+    if (arg === '-test') {
+      return true
+    }
   }
+  return false
 }
+
+function sockets () {
+  // browser
+  io.on('connection', function (socket) {
+    // connection
+    worker.scrape(function (agents) {
+      socket.emit('renderAgents', agents.html)
+    })
+    // listeners
+    socket.on('toggleAgent', function (agent) {
+      console.log(agent)
+    })
+    socket.on('scheduleAgent', function (agent) {
+      console.log(agent)
+    })
+  })
+}
+
+// public
+exports.testmode = testmode

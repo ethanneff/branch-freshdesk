@@ -36,3 +36,4 @@
 
     - push to git
     - move credentials to config.json
+    - https://uptimerobot.com

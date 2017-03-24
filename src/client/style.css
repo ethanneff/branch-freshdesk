@@ -1,0 +1,17 @@
+@media (min-width: 768px) {
+  .text-justify-sm {
+    text-align: justify;
+  }
+  .text-right-sm {
+    text-align: right;
+  }
+}
+button {
+  min-width: 3em;
+}
+.container {
+  max-width: 50em;
+}
+.well {
+  padding: 0.5em 2em;
+}

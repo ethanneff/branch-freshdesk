@@ -1,7 +1,7 @@
 {
   "name": "node",
   "description": "",
-  "main": "./src/server/app.js",
+  "main": "./src/server.js",
   "authors": [
     "Ethan Neff <ethan.neff@eneff.com>"
   ],
@@ -15,9 +15,8 @@
     "tests"
   ],
   "dependencies": {
-    "jquery": "^3.2.0",
     "bootstrap": "^3.3.7",
-    "font-awesome": "fontawesome#^4.7.0",
-    "socket.io": "^1.7.3"
+    "font-awesome": "^4.7.0",
+    "socket.io-client": "^1.7.2"
   }
 }
