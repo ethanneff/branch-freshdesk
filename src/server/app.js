@@ -53,9 +53,14 @@ function sockets () {
     worker.scrape(function (agents) {
       socket.emit('renderAgents', agents.html)
     })
+
     // listeners
-    socket.on('toggleAgent', function (agent) {
-      console.log(agent)
+    socket.on('toggleAgent', function (agent, callback) {
+      worker.toggle(agent, function (success) {
+        worker.scrape(function (agents) {
+          callback(agents.html)
+        })
+      })
     })
     socket.on('scheduleAgent', function (agent) {
       console.log(agent)

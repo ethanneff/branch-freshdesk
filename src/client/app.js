@@ -12,29 +12,30 @@ io().on('renderAgents', function (data) {
 
 function toggleContent (content, show) {
   agents.innerHTML = (show) ? content : ''
-  spinner.style.display = (show) ? 'none' : 'block'
+  spinner.style.display = (show) ? 'none' : 'inline-block'
 }
 
 // notifications
 function scheduleAgent (e) {
-  console.log('scheduleAgent')
   var id = e.attributes['data-id'].value
   var day = e.value
   var activated = toggleButton(e, true)
   io().emit('scheduleAgent', {
-    agent: id,
+    id: id,
     day: day,
     activated: activated
   })
 }
 
 function toggleAgent (e) {
-  console.log('toggleAgent')
   var id = e.attributes['data-id'].value
   var activated = toggleButton(e, false)
+  toggleContent(null, false)
   io().emit('toggleAgent', {
-    agent: id,
+    id: id,
     activated: activated
+  }, function (data) {
+    toggleContent(data, true)
   })
 }
 

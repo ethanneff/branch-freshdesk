@@ -25,7 +25,7 @@ function scrape (callback) {
     var slackMessage = generateSlack(agentsJson)
 
     isActiveDifferent(agentsJson) && messageSlack(slackMessage)
-    fs.writeFileSync(AGENTS_FILE, JSON.stringify(agentsJson), 'utf8')
+    fs.writeFileSync(AGENTS_FILE, JSON.stringify(agentsJson, null, 2), 'utf8')
     fs.writeFileSync(SCHEDULE_FILE, JSON.stringify(scheduleJson), 'utf8')
 
     // callback
@@ -38,11 +38,28 @@ function scrape (callback) {
   })
 }
 
-function schedule (callback) {
+function toggle (agent, callback) {
+  // expected 6015556835 actual 6006069408
+  var options = {
+    method: 'POST',
+    url: 'https://support.branch.io/agents/' + agent.id + '/toggle_availability?admin=true',
+    body: 'value=' + agent.activated + '&id=' + agent.id,
+    auth: {
+      'user': FRESHDESK_USER,
+      'pass': FRESHDESK_PASS
+    }
+  }
 
+  request(options, function (error, response, body) {
+    if (!error && response.statusCode === 200) {
+      callback()
+    } else {
+      throw new Error(body)
+    }
+  })
 }
 
-function toggle (callback) {
+function schedule (agent) {
 
 }
 
@@ -107,45 +124,45 @@ function messageSlack (message, callback) {
 }
 
 function generateAgents (response) {
+  var availableStart = '<tr data-id="'
+  var availableFinish = '"'
+  var idStart = 'data-id="'
+  var idFinish = '"'
   var nameStart = '<span href="#">'
   var nameFinish = '</span>'
   var timeStart = '<span class="active_since muted">'
   var timeFinish = '</span>'
-  var availableStart = 'data-availability="'
-  var availableFinish = '"'
-  var idStart = 'data-id="'
-  var idFinish = '"'
   var agents = []
+
   var location = 0
   while (true) {
-    var nsi = response.indexOf(nameStart, location + 1)
+    var asi = response.indexOf(availableStart, location + 1)
+    var afi = response.indexOf(availableFinish, asi + availableStart.length + 1)
+    var a = response.substr(asi + availableStart.length, afi - asi - availableStart.length)
+
+    var isi = response.indexOf(idStart, afi + 1)
+    var ifi = response.indexOf(idFinish, isi + idStart.length + 1)
+    var i = response.substr(isi + idStart.length, ifi - isi - idStart.length)
+
+    var nsi = response.indexOf(nameStart, ifi + 1)
     var nfi = response.indexOf(nameFinish, nsi + nameStart.length + 1)
     var n = response.substr(nsi + nameStart.length, nfi - nsi - nameStart.length)
-    if (nsi === -1) {
-      break
-    }
 
     var tsi = response.indexOf(timeStart, nfi + 1)
     var tfi = response.indexOf(timeFinish, tsi + timeStart.length + 1)
     var t = response.substr(tsi + timeStart.length, tfi - tsi - timeStart.length)
 
-    var asi = response.indexOf(availableStart, tfi + 1)
-    var afi = response.indexOf(availableFinish, asi + availableStart.length + 1)
-    var a = response.substr(asi + availableStart.length, afi - asi - availableStart.length)
-    a = (a === 'true')
-
-    var isi = response.indexOf(idStart, afi + 1)
-    var ifi = response.indexOf(idFinish, isi + idStart.length + 1)
-    var i = response.substr(isi + idStart.length, ifi - isi - idStart.length)
-    i = parseInt(i) || Date.now()
+    if (asi === -1) {
+      break
+    }
 
     agents.push({
-      id: i,
+      id: parseInt(i),
       name: n,
       time: t,
-      available: a
+      available: (a === 'available')
     })
-    location = nfi
+    location = tfi
   }
 
   return agents
