@@ -5,41 +5,42 @@ var server = require('./app.js')
 
 // properties
 var AGENTS_FILE = './src/server/.available-agents'
-var SCHEDULE_FILE = './src/server/.schedule-agents'
+var SCHEDULE_FILE = './src/server/.scheduled-agents'
 var FRESHDESK_USER = 'eneff@branch.io'
 var FRESHDESK_PASS = 'JRxp6102'
 
 // entry
 module.exports = {
   scrape: scrape,
-  toggle: toggle,
-  schedule: schedule
+  schedule: schedule,
+  toggleAgent: toggleAgent,
+  toggleSchedule: toggleSchedule
 }
 
 // public
 function scrape (callback) {
   scrapeAgents(function (response) {
     var agentsJson = generateAgents(response)
-    var scheduleJson = generateSchedule(agentsJson)
     var htmlContent = generateHtml(agentsJson)
     var slackMessage = generateSlack(agentsJson)
 
     isActiveDifferent(agentsJson) && messageSlack(slackMessage)
     fs.writeFileSync(AGENTS_FILE, JSON.stringify(agentsJson, null, 2), 'utf8')
-    fs.writeFileSync(SCHEDULE_FILE, JSON.stringify(scheduleJson), 'utf8')
 
     // callback
     callback({
       agents: agentsJson,
-      schedule: scheduleJson,
       html: htmlContent,
       slack: slackMessage
     })
   })
 }
 
-function toggle (agent, callback) {
-  // expected 6015556835 actual 6006069408
+function schedule (agent) {
+  fs.readFileSync(SCHEDULE_FILE, 'utf8')
+}
+
+function toggleAgent (agent, callback) {
   var options = {
     method: 'POST',
     url: 'https://support.branch.io/agents/' + agent.id + '/toggle_availability?admin=true',
@@ -59,8 +60,26 @@ function toggle (agent, callback) {
   })
 }
 
-function schedule (agent) {
+function toggleSchedule (agent) {
+  var schedule = readSchedule()
 
+  if (agent.activated) {
+    schedule[agent.day][agent.id] = true
+  } else {
+    delete schedule[agent.day][agent.id]
+  }
+
+  return fs.writeFileSync(SCHEDULE_FILE, JSON.stringify(schedule, null, 2), 'utf8')
+}
+
+function readSchedule () {
+  var schedule
+  try {
+    schedule = JSON.parse(fs.readFileSync(SCHEDULE_FILE, 'utf8'))
+  } catch (e) {
+    schedule = { 'M': {}, 'T': {}, 'W': {}, 'H': {}, 'F': {} }
+  }
+  return schedule
 }
 
 // methods
@@ -82,25 +101,46 @@ function scrapeAgents (callback) {
   })
 }
 
-function isActiveDifferent (agents) {
-  var currents
+function isActiveDifferent (currentAgents) {
+  var previousAgents
   try {
-    currents = JSON.parse(fs.readFileSync(AGENTS_FILE, 'utf8'))
+    previousAgents = JSON.parse(fs.readFileSync(AGENTS_FILE, 'utf8'))
   } catch (e) {
     return false // no file
   }
 
-  if (currents.length === 0) {
-    return false // no different first run
+  var i
+  var previousAgent
+  var currentAgent
+  var previousAgentsArray = []
+  for (i = 0; i < previousAgents.length; i++) {
+    previousAgent = previousAgents[i]
+    if (previousAgent.available) {
+      previousAgentsArray.push(previousAgent)
+    }
   }
-  if (currents.length !== agents.length) {
-    return true // different lengths
+  var currentAgentsArray = []
+  for (i = 0; i < currentAgents.length; i++) {
+    currentAgent = currentAgents[i]
+    if (currentAgent.available) {
+      currentAgentsArray.push(currentAgent)
+    }
   }
-
-  for (var i = 0; i < currents.length; i++) {
-    var current = currents[i]
-    if (agents.indexOf(current) === -1) {
-      return true // different agents
+  if (previousAgentsArray.length !== currentAgentsArray.length) {
+    return true
+  }
+  while (previousAgentsArray.length > 0) {
+    previousAgent = previousAgentsArray.pop()
+    var found = false
+    for (i = 0; i < currentAgentsArray.length; i++) {
+      currentAgent = currentAgentsArray[i]
+      if (previousAgent.id === currentAgent.id) {
+        found = true
+        break
+      }
+    }
+    if (!found) {
+      return true
     }
   }
 
@@ -168,15 +208,14 @@ function generateAgents (response) {
   return agents
 }
 
-function generateSchedule (agents) {
-  return agents
-}
-
 function generateHtml (agents) {
+  var schedule = readSchedule()
+
   var output = ''
   for (var i = 0; i < agents.length; i++) {
     var agent = agents[i]
     var active = agent.available ? 'btn-success' : 'btn-default'
+
     output += '' +
     '<li class="list-group-item">' +
     '<div class="row text-center">' +
@@ -185,17 +224,21 @@ function generateHtml (agents) {
     '<div class="btn-group-xs text-right-sm" role="group">' +
     '<button type="button" class="btn ' + active + '" data-id="' + agent.id + '" onclick="toggleAgent(this)"><i class="fa fa-check" aria-hidden="true"></i></button>' +
     '<span>&nbsp;</span>' +
-    '<button type="button" class="btn btn-default" data-id="' + agent.id + '" onclick="scheduleAgent(this)" value="M">M</button>' +
-    '<button type="button" class="btn btn-default" data-id="' + agent.id + '" onclick="scheduleAgent(this)" value="T">T</button>' +
-    '<button type="button" class="btn btn-default" data-id="' + agent.id + '" onclick="scheduleAgent(this)" value="W">W</button>' +
-    '<button type="button" class="btn btn-default" data-id="' + agent.id + '" onclick="scheduleAgent(this)" value="H">H</button>' +
-    '<button type="button" class="btn btn-default" data-id="' + agent.id + '" onclick="scheduleAgent(this)" value="F">F</button>' +
+    '<button type="button" class="btn ' + scheduledHtmlButton(schedule, agent.id, 'M') + '" data-id="' + agent.id + '" onclick="scheduleAgent(this)" value="M">M</button>' +
+    '<button type="button" class="btn ' + scheduledHtmlButton(schedule, agent.id, 'T') + '" data-id="' + agent.id + '" onclick="scheduleAgent(this)" value="T">T</button>' +
+    '<button type="button" class="btn ' + scheduledHtmlButton(schedule, agent.id, 'W') + '" data-id="' + agent.id + '" onclick="scheduleAgent(this)" value="W">W</button>' +
+    '<button type="button" class="btn ' + scheduledHtmlButton(schedule, agent.id, 'H') + '" data-id="' + agent.id + '" onclick="scheduleAgent(this)" value="H">H</button>' +
+    '<button type="button" class="btn ' + scheduledHtmlButton(schedule, agent.id, 'F') + '" data-id="' + agent.id + '" onclick="scheduleAgent(this)" value="F">F</button>' +
     '</div>' +
     '</div>' +
     '</div>' +
     '</li>'
   }
   return output
+}
+
+function scheduledHtmlButton (schedule, id, day) {
+  return (schedule[day].hasOwnProperty(id)) ? 'btn-info' : 'btn-default'
 }
 
 function generateSlack (agents) {

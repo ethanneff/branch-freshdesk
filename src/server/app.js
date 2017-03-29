@@ -56,14 +56,14 @@ function sockets () {
 
     // listeners
     socket.on('toggleAgent', function (agent, callback) {
-      worker.toggle(agent, function (success) {
+      worker.toggleAgent(agent, function (success) {
         worker.scrape(function (agents) {
           callback(agents.html)
         })
       })
     })
-    socket.on('scheduleAgent', function (agent) {
-      console.log(agent)
+    socket.on('toggleSchedule', function (agent) {
+      worker.toggleSchedule(agent)
     })
   })
 }

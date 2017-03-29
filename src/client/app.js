@@ -3,24 +3,20 @@
 
 // cache DOM
 var agents = document.getElementById('agents')
-var spinner = document.getElementById('spinner')
+var loader = document.getElementById('loader')
 
 // listeners
 io().on('renderAgents', function (data) {
-  toggleContent(data, true)
+  agents.innerHTML = data
+  loader.style.display = 'none'
 })
-
-function toggleContent (content, show) {
-  agents.innerHTML = (show) ? content : ''
-  spinner.style.display = (show) ? 'none' : 'inline-block'
-}
 
 // notifications
 function scheduleAgent (e) {
   var id = e.attributes['data-id'].value
   var day = e.value
   var activated = toggleButton(e, true)
-  io().emit('scheduleAgent', {
+  io().emit('toggleSchedule', {
     id: id,
     day: day,
     activated: activated
@@ -30,12 +26,13 @@ function scheduleAgent (e) {
 function toggleAgent (e) {
   var id = e.attributes['data-id'].value
   var activated = toggleButton(e, false)
-  toggleContent(null, false)
+  loader.style.display = 'block'
   io().emit('toggleAgent', {
     id: id,
     activated: activated
   }, function (data) {
-    toggleContent(data, true)
+    agents.innerHTML = data
+    loader.style.display = 'none'
   })
 }
 
