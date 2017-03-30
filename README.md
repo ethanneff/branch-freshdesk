@@ -9,15 +9,22 @@
     - `request` server cURLs
     - `socket.io` server to website updates
     - `helmet` xss security
-    - `ejs` website templating
 
   - files
 
     - `Procfile` runs worker on load
-    - `app.js` run website
-    - `clock.js` simulates a cron job
-    - `worker.js` runs server operations
-    - `index.ejs` client website
+    - `package.json` server dependencies and scripts
+    - `bower.json` website dependencies
+    - `gulpfile.js` task manager
+    - client
+      + `index.html` client website
+      + `app.js` client
+      + `style.css` formatting
+    - server
+      + `app.js` server
+      + `clock.js` simulates a cron job
+      + `worker.js` runs server operations
+      
 
   - develop
 
