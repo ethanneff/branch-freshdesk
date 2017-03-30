@@ -1,14 +1,8 @@
 [
   {
-    "id": 6011133869,
-    "name": "David Westgate",
-    "time": "Since 4 days 3 hours",
-    "available": true
-  },
-  {
     "id": 6001527367,
     "name": "Rubin Singh",
-    "time": "Since 22 hours 54 minutes",
+    "time": "Since 23 hours 0 minutes",
     "available": true
   },
   {
@@ -30,15 +24,21 @@
     "available": true
   },
   {
+    "id": 6011133869,
+    "name": "David Westgate",
+    "time": "Since 4 days 4 hours",
+    "available": true
+  },
+  {
     "id": 6008991911,
     "name": "Ahmed Nawar",
-    "time": "Since 5 seconds",
+    "time": "Since 5 minutes 56 seconds",
     "available": false
   },
   {
     "id": 6000404013,
     "name": "Alex Austin",
-    "time": "Since 2 hours 7 minutes",
+    "time": "Since 2 hours 13 minutes",
     "available": false
   },
   {
@@ -74,13 +74,13 @@
   {
     "id": 6015556835,
     "name": "Ethan Neff",
-    "time": "Since 1 seconds",
+    "time": "Since 5 minutes 52 seconds",
     "available": false
   },
   {
     "id": 6006069408,
     "name": "Evan Groth",
-    "time": "Since 2 hours 6 minutes",
+    "time": "Since 2 hours 12 minutes",
     "available": false
   },
   {
