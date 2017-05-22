@@ -4,9 +4,9 @@
   "description": "",
   "main": "./src/server/app.js",
   "scripts": {
-    "build": "node ./src/server/app.js -test",
-    "start": "gulp lint; open http://localhost:5000; node ./src/server/app.js",
-    "test": "gulp lint; open http://localhost:5000; node ./src/server/app.js -test"
+    "build": "node ./src/server/app.js",
+    "test": "gulp lint; open http://localhost:5000; node ./src/server/app.js",
+    "prod": "gulp lint; open http://localhost:5000; node ./src/server/app.js -prod"
   },
   "keywords": [],
   "author": "",

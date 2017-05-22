@@ -10,15 +10,12 @@ var helmet = require('helmet')
 var config = require('./config')
 var worker = require('./worker.js')
 
-// properties
-var testmode
-
 // entry
 module.exports = run()
 
 function run () {
-  // testmode
-  testmode = isTestMode()
+  // args
+  processArguments()
 
   // server
   app.use(helmet())
@@ -35,15 +32,15 @@ function run () {
 }
 
 // methods
-function isTestMode () {
+function processArguments () {
   var args = process.argv.splice(2)
   for (var i = 0; i < args.length; i++) {
     var arg = args[i]
-    if (arg === '-test') {
-      return true
+    if (arg === '-prod') {
+      config.prod()
+    }
     }
   }
-  return false
 }
 
 function sockets () {
@@ -67,6 +64,3 @@ function sockets () {
     })
   })
 }
-
-// public
-exports.testmode = testmode
