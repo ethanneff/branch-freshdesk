@@ -5,17 +5,22 @@
 var agents = document.getElementById('agents')
 var loader = document.getElementById('loader')
 
-// listeners
-io().on('renderAgents', function (data) {
+// update DOM
+function render (data) {
   agents.innerHTML = data
   loader.style.display = 'none'
-})
+}
 
 // notifications
-function scheduleAgent (e) {
+io().emit('pageLoad', function (data) {
+  render(data)
+})
+
+function toggleSchedule (e) {
   var id = e.attributes['data-id'].value
   var day = e.value
   var activated = toggleButton(e, true)
+
   io().emit('toggleSchedule', {
     id: id,
     day: day,
@@ -27,12 +32,12 @@ function toggleAgent (e) {
   var id = e.attributes['data-id'].value
   var activated = toggleButton(e, false)
   loader.style.display = 'block'
+
   io().emit('toggleAgent', {
     id: id,
     activated: activated
   }, function (data) {
-    agents.innerHTML = data
-    loader.style.display = 'none'
+    render(data)
   })
 }
 

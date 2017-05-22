@@ -49,12 +49,12 @@ function isTestMode () {
 function sockets () {
   // browser
   io.on('connection', function (socket) {
-    // connection
-    worker.scrape(function (agents) {
-      socket.emit('renderAgents', agents.html)
-    })
-
     // listeners
+    socket.on('pageLoad', function (callback) {
+      worker.scrape(false, function (data) {
+        callback(data.html)
+      })
+    })
     socket.on('toggleAgent', function (agent, callback) {
       worker.toggleAgent(agent, function (success) {
         worker.scrape(function (agents) {
