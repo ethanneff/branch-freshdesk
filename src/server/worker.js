@@ -252,8 +252,8 @@ function scheduledHtmlButton (schedule, id, day) {
 function generateSlack (agents) {
   var username = 'TimBOT'
   var attachments = [{
-    'title': 'Active agents',
-    'color': '#1cadce',
+    'author_name': 'Active Freshdesk Agents',
+    'author_icon': 'http://i.imgur.com/9bm3oH5.jpg',
     'fields': []
   }]
 
