@@ -20,6 +20,7 @@ function scrape (slackSend, callback) {
   scrapeAgents(function (response) {
     // process
     var agentsJson = generateAgents(response)
+    var activeAgents = generateCurrentAgents(agentsJson)
     var htmlContent = generateHtml(agentsJson)
     var slackMessage = generateSlack(agentsJson)
     var send = slackSend && isActiveDifferent(agentsJson)
@@ -32,6 +33,7 @@ function scrape (slackSend, callback) {
       // callback
       callback({
         agents: agentsJson,
+        active: activeAgents,
         html: htmlContent,
         slack: slackMessage
       })
@@ -39,8 +41,45 @@ function scrape (slackSend, callback) {
   })
 }
 
-function schedule (agent) {
-  fs.readFileSync(SCHEDULE_FILE, 'utf8')
+function schedule (callback) {
+  var day = new Date().getDay() + 1
+  if (day < 1 || day > 5) {
+    return
+  }
+  scrape(false, function (data) {
+    var active = data.active
+    var scheduled = readSchedule()
+    console.log(active, scheduled)
+    callback()
+    // slack
+  })
+
+  // var schedule = readSchedule()
+  // var currentAgents = getCurrentAgents()
+  // var activeAgents = []
+
+  // for (agent in activeAgents) {
+  //   activeAgents.push(agent)
+  // }
+
+  // Promise.all(currentAgents).then(function () {
+  //   Promise.all(activeAgents).then(function () {
+  //     callback()
+  //   }, function() {
+  //     throw new Error('could not toggle all active agents')
+  //   });
+  // }, function() {
+  //   throw new Error('could not toggle all current agents')
+  // });
+
+  // pull all available from freshdesk
+  // toggle all available off
+
+  // check file
+  // pull day from file
+  // toggle all availabe on
+
+  // slack
 }
 
 function toggleAgent (agent, callback) {
@@ -83,6 +122,18 @@ function readSchedule () {
     schedule = { 1: {}, 2: {}, 3: {}, 4: {}, 5: {} }
   }
   return schedule
+}
+
+function generateCurrentAgents (agents) {
+  var current = []
+  for (var i = 0; i < agents.length; i++) {
+    var agent = agents[i]
+    if (agent.available) {
+      current.push(agent.id)
+    }
+  }
+
+  return current
 }
 
 // methods
