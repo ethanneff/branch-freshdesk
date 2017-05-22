@@ -80,7 +80,7 @@ function readSchedule () {
   try {
     schedule = JSON.parse(fs.readFileSync(SCHEDULE_FILE, 'utf8'))
   } catch (e) {
-    schedule = { 'M': {}, 'T': {}, 'W': {}, 'H': {}, 'F': {} }
+    schedule = { 1: {}, 2: {}, 3: {}, 4: {}, 5: {} }
   }
   return schedule
 }
@@ -231,11 +231,11 @@ function generateHtml (agents) {
     '<div class="btn-group-xs text-right-sm" role="group">' +
     '<button type="button" class="btn ' + active + '" data-id="' + agent.id + '" onclick="toggleAgent(this)"><i class="fa fa-check" aria-hidden="true"></i></button>' +
     '<span>&nbsp;</span>' +
-    '<button type="button" class="btn ' + scheduledHtmlButton(schedule, agent.id, 'M') + '" data-id="' + agent.id + '" onclick="scheduleAgent(this)" value="M">M</button>' +
-    '<button type="button" class="btn ' + scheduledHtmlButton(schedule, agent.id, 'T') + '" data-id="' + agent.id + '" onclick="scheduleAgent(this)" value="T">T</button>' +
-    '<button type="button" class="btn ' + scheduledHtmlButton(schedule, agent.id, 'W') + '" data-id="' + agent.id + '" onclick="scheduleAgent(this)" value="W">W</button>' +
-    '<button type="button" class="btn ' + scheduledHtmlButton(schedule, agent.id, 'H') + '" data-id="' + agent.id + '" onclick="scheduleAgent(this)" value="H">H</button>' +
-    '<button type="button" class="btn ' + scheduledHtmlButton(schedule, agent.id, 'F') + '" data-id="' + agent.id + '" onclick="scheduleAgent(this)" value="F">F</button>' +
+    '<button type="button" class="btn ' + scheduledHtmlButton(schedule, agent.id, '1') + '" data-id="' + agent.id + '" onclick="toggleSchedule(this)" value="1">M</button>' +
+    '<button type="button" class="btn ' + scheduledHtmlButton(schedule, agent.id, '2') + '" data-id="' + agent.id + '" onclick="toggleSchedule(this)" value="2">T</button>' +
+    '<button type="button" class="btn ' + scheduledHtmlButton(schedule, agent.id, '3') + '" data-id="' + agent.id + '" onclick="toggleSchedule(this)" value="3">W</button>' +
+    '<button type="button" class="btn ' + scheduledHtmlButton(schedule, agent.id, '4') + '" data-id="' + agent.id + '" onclick="toggleSchedule(this)" value="4">H</button>' +
+    '<button type="button" class="btn ' + scheduledHtmlButton(schedule, agent.id, '5') + '" data-id="' + agent.id + '" onclick="toggleSchedule(this)" value="5">F</button>' +
     '</div>' +
     '</div>' +
     '</div>' +
