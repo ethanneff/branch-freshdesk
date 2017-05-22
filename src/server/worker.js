@@ -1,7 +1,6 @@
 // lib
 var request = require('request')
 var fs = require('fs')
-var server = require('./app.js')
 var config = require('./config')
 
 // properties
