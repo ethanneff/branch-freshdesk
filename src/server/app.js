@@ -13,6 +13,7 @@ var worker = require('./worker.js')
 // entry
 module.exports = run()
 
+// methods
 function run () {
   // args
   processArguments()
@@ -25,13 +26,13 @@ function run () {
   })
 
   // start
-  http.listen(process.env.PORT || 5000)
+  http.listen(config.server.port)
 
   // sockets
   sockets()
 }
 
-// methods
+// read arguments from cli
 function processArguments () {
   var args = process.argv.splice(2)
   for (var i = 0; i < args.length; i++) {
@@ -52,8 +53,9 @@ function processArguments () {
   }
 }
 
+// handle server to web connection
 function sockets () {
-  // browser
+  // browser connect
   io.on('connection', function (socket) {
     // listeners
     socket.on('pageLoad', function (callback) {

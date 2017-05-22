@@ -15,7 +15,7 @@ module.exports = {
   toggleSchedule: toggleSchedule
 }
 
-// public
+// from cron or pageload: scrapes freshdesk, saves data, outputs to slack
 function scrape (slackSend, callback) {
   scrapeAgents(function (response) {
     // process
@@ -41,6 +41,7 @@ function scrape (slackSend, callback) {
   })
 }
 
+// from cron: dequeues and requeues agents to freshdes, outputs to slack
 function schedule (callback) {
   var day = new Date().getDay() + 1
   if (day < 1 || day > 5) {
@@ -82,6 +83,7 @@ function schedule (callback) {
   // slack
 }
 
+// from web: activate or deactivate agent from freshdesk
 function toggleAgent (agent, callback) {
   var options = {
     method: 'POST',
@@ -102,6 +104,7 @@ function toggleAgent (agent, callback) {
   })
 }
 
+// from web, save scheduled data
 function toggleSchedule (agent) {
   var schedule = readSchedule()
 
@@ -114,6 +117,7 @@ function toggleSchedule (agent) {
   return fs.writeFileSync(SCHEDULE_FILE, JSON.stringify(schedule, null, 2), 'utf8')
 }
 
+// get schedule file
 function readSchedule () {
   var schedule
   try {
@@ -124,6 +128,7 @@ function readSchedule () {
   return schedule
 }
 
+// determines active agents
 function generateCurrentAgents (agents) {
   var current = []
   for (var i = 0; i < agents.length; i++) {
@@ -136,7 +141,7 @@ function generateCurrentAgents (agents) {
   return current
 }
 
-// methods
+// scrape freshdesk for html
 function scrapeAgents (callback) {
   var options = {
     url: 'https://support.branch.io/helpdesk/dashboard/agent_status#ticket-assignment',
@@ -155,6 +160,7 @@ function scrapeAgents (callback) {
   })
 }
 
+// determines if file agent json is different scrape agent json
 function isActiveDifferent (currentAgents) {
   var previousAgents
   try {
@@ -163,6 +169,7 @@ function isActiveDifferent (currentAgents) {
     return false // no file
   }
 
+  // comparison of json to json
   var i
   var previousAgent
   var currentAgent
@@ -198,9 +205,11 @@ function isActiveDifferent (currentAgents) {
     }
   }
 
-  return false // no different
+  // no difference
+  return false
 }
 
+// sends a message to slack
 function messageSlack (send, message, callback) {
   if (!send) {
     return callback()
@@ -221,6 +230,7 @@ function messageSlack (send, message, callback) {
   })
 }
 
+// transform html to json of agents
 function generateAgents (response) {
   var availableStart = '<tr data-id="'
   var availableFinish = '"'
@@ -266,6 +276,7 @@ function generateAgents (response) {
   return agents
 }
 
+// transform json of agent to html
 function generateHtml (agents) {
   var schedule = readSchedule()
 
@@ -295,10 +306,12 @@ function generateHtml (agents) {
   return output
 }
 
+// helper for generateHtml for button class
 function scheduledHtmlButton (schedule, id, day) {
   return (schedule[day].hasOwnProperty(id)) ? 'btn-info' : 'btn-default'
 }
 
+// generates the message for slack
 function generateSlack (agents) {
   var username = 'TimBOT'
   var attachments = [{
