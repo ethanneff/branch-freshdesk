@@ -2,12 +2,11 @@
 var request = require('request')
 var fs = require('fs')
 var server = require('./app.js')
+var config = require('./config')
 
 // properties
 var AGENTS_FILE = './src/server/.available-agents'
 var SCHEDULE_FILE = './src/server/.scheduled-agents'
-var FRESHDESK_USER = 'eneff@branch.io'
-var FRESHDESK_PASS = 'JRxp6102'
 
 // entry
 module.exports = {
@@ -46,8 +45,8 @@ function toggleAgent (agent, callback) {
     url: 'https://support.branch.io/agents/' + agent.id + '/toggle_availability?admin=true',
     body: 'value=' + agent.activated + '&id=' + agent.id,
     auth: {
-      'user': FRESHDESK_USER,
-      'pass': FRESHDESK_PASS
+      'user': config.freshdesk.user,
+      'pass': config.freshdesk.pass
     }
   }
 
@@ -87,8 +86,8 @@ function scrapeAgents (callback) {
   var options = {
     url: 'https://support.branch.io/helpdesk/dashboard/agent_status#ticket-assignment',
     auth: {
-      'user': FRESHDESK_USER,
-      'pass': FRESHDESK_PASS
+      'user': config.freshdesk.user,
+      'pass': config.freshdesk.pass
     }
   }
 
@@ -150,7 +149,7 @@ function isActiveDifferent (currentAgents) {
 function messageSlack (message, callback) {
   var options = {
     method: 'POST',
-    url: 'https://hooks.slack.com/services/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',
+    url: 'https://hooks.slack.com/services' + config.slack.user,
     body: message
   }
 
@@ -259,7 +258,7 @@ function generateSlack (agents) {
   attachments[0].fields.push({'value': value})
 
   var body = {
-    'channel': server.testmode ? '#eneff_test' : '#integration-eng-core',
+    'channel': config.slack.channel,
     'username': username,
     'attachments': attachments,
     'icon_emoji': ':tim:'

@@ -7,6 +7,7 @@ var io = require('socket.io')(http)
 // lib
 var path = require('path')
 var helmet = require('helmet')
+var config = require('./config')
 var worker = require('./worker.js')
 
 // properties
