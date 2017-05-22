@@ -17,20 +17,25 @@ module.exports = {
 }
 
 // public
-function scrape (callback) {
+function scrape (slackSend, callback) {
   scrapeAgents(function (response) {
+    // process
     var agentsJson = generateAgents(response)
     var htmlContent = generateHtml(agentsJson)
     var slackMessage = generateSlack(agentsJson)
+    var send = slackSend && isActiveDifferent(agentsJson)
 
-    isActiveDifferent(agentsJson) && messageSlack(slackMessage)
-    fs.writeFileSync(AGENTS_FILE, JSON.stringify(agentsJson, null, 2), 'utf8')
+    // slack
+    messageSlack(send, slackMessage, function (response) {
+      // save
+      fs.writeFileSync(AGENTS_FILE, JSON.stringify(agentsJson, null, 2), 'utf8')
 
-    // callback
-    callback({
-      agents: agentsJson,
-      html: htmlContent,
-      slack: slackMessage
+      // callback
+      callback({
+        agents: agentsJson,
+        html: htmlContent,
+        slack: slackMessage
+      })
     })
   })
 }
@@ -146,7 +151,11 @@ function isActiveDifferent (currentAgents) {
   return false // no different
 }
 
-function messageSlack (message, callback) {
+function messageSlack (send, message, callback) {
+  if (!send) {
+    return callback()
+  }
+
   var options = {
     method: 'POST',
     url: 'https://hooks.slack.com/services' + config.slack.user,
@@ -155,7 +164,7 @@ function messageSlack (message, callback) {
 
   request(options, function (error, response, body) {
     if (!error && response.statusCode === 200) {
-      if (callback) callback(body)
+      callback(body)
     } else {
       throw new Error(body)
     }

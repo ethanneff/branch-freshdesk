@@ -39,6 +39,15 @@ function processArguments () {
     if (arg === '-prod') {
       config.prod()
     }
+    if (arg === '-slack') {
+      worker.scrape(true, function () {
+        process.exit()
+      })
+    }
+    if (arg === '-schedule') {
+      worker.schedule(function () {
+        process.exit()
+      })
     }
   }
 }
@@ -54,8 +63,8 @@ function sockets () {
     })
     socket.on('toggleAgent', function (agent, callback) {
       worker.toggleAgent(agent, function (success) {
-        worker.scrape(function (agents) {
-          callback(agents.html)
+        worker.scrape(true, function (data) {
+          callback(data.html)
         })
       })
     })
