@@ -9,6 +9,8 @@
     - `request` server cURLs
     - `socket.io` server to website updates
     - `helmet` xss security
+    - `jsonwebtoken` authentication
+    - `body-parser` json post requests
 
   - files
 
