@@ -41,46 +41,53 @@ function scrape (slackSend, callback) {
   })
 }
 
-// from cron: dequeues and requeues agents to freshdes, outputs to slack
+// from cron: dequeues and requeues agents to freshdesh, outputs to slack
 function schedule (callback) {
-  var day = new Date().getDay() + 1
-  if (day < 1 || day > 5) {
-    return
+  // tomorrow
+  var tomorrow = new Date().getDay() + 1
+  tomorrow = (tomorrow === 6) ? 1 : tomorrow
+
+  // early exit
+  if (tomorrow < 1 || tomorrow > 5) {
+    return callback()
   }
+
+  // grab data
   scrape(false, function (data) {
-    var active = data.active
-    var scheduled = readSchedule()
-    console.log(active, scheduled)
-    callback()
-    // slack
+    var prev = data.active
+    var schedule = readSchedule()
+    var scheduled = schedule[tomorrow]
+    var next = []
+    for (var agent in scheduled) {
+      next.push(agent)
+    }
+
+    // disable all
+    toggleAgents(prev, function () {
+      // enable today
+      toggleAgents(next, function () {
+        // message slack
+        scrape(true, function () {
+          callback()
+        })
+      })
+    })
   })
+}
 
-  // var schedule = readSchedule()
-  // var currentAgents = getCurrentAgents()
-  // var activeAgents = []
-
-  // for (agent in activeAgents) {
-  //   activeAgents.push(agent)
-  // }
-
-  // Promise.all(currentAgents).then(function () {
-  //   Promise.all(activeAgents).then(function () {
-  //     callback()
-  //   }, function() {
-  //     throw new Error('could not toggle all active agents')
-  //   });
-  // }, function() {
-  //   throw new Error('could not toggle all current agents')
-  // });
-
-  // pull all available from freshdesk
-  // toggle all available off
-
-  // check file
-  // pull day from file
-  // toggle all availabe on
-
-  // slack
+// from schedule: group activate or deactivate agent from freshdesk
+function toggleAgents (agents, callback) {
+  if (agents.length === 0) {
+    return callback()
+  }
+  var id = agents.pop()
+  var agent = {
+    id: id,
+    activated: true
+  }
+  toggleAgent(agent, function () {
+    toggleAgents(agents, callback)
+  })
 }
 
 // from web: activate or deactivate agent from freshdesk
