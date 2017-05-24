@@ -8,7 +8,7 @@
 
 ## Readme
 
-  - dependencies
+- #### dependencies
   
     - `node` server dependencies
     - `bower` website dependencies
@@ -35,20 +35,20 @@
       + `clock.js` simulates a cron job
       + `worker.js` runs server operations
 
-  - develop
+- #### develop
 
   ```bash
   npm start
   ```
 
-  - deploy
+- #### deploy
 
   ```bash
   git commit -am 'update'
   git push heroku master
   ```
     
-  - eneff.io
+ - #### eneff.io
     
     - dependencies
 
